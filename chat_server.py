@@ -26,6 +26,7 @@ def chat_server():
         ready_to_read,ready_to_write,in_error = select.select(SOCKET_LIST,[],[],0)
       
         for sock in ready_to_read:
+
             # a new connection request recieved
             if sock == server_socket: 
                 sockfd, addr = server_socket.accept()
@@ -60,6 +61,7 @@ def chat_server():
     
 # broadcast chat messages to all connected clients
 def broadcast (server_socket, sock, message):
+        
     for socket in SOCKET_LIST:
         # send the message only to peer
         if socket != server_socket and socket != sock :
@@ -71,6 +73,7 @@ def broadcast (server_socket, sock, message):
                 # broken socket, remove it
                 if socket in SOCKET_LIST:
                     SOCKET_LIST.remove(socket)
+                    broadcast(server_socket, sock, "Client (%s, %s) lost connection\n" % addr) 
  
 if __name__ == "__main__":
 
