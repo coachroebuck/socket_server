@@ -2,10 +2,11 @@
  
 import sys, socket, select
 
-HOST = '192.168.29.143' 
+# HOST = '192.168.29.143' 
+HOST = '192.168.1.146' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
-PORT = 9009
+PORT = 5020
 
 def chat_server():
 
@@ -33,6 +34,8 @@ def chat_server():
                 SOCKET_LIST.append(sockfd)
                 print "Client (%s, %s) connected" % addr
                  
+                # json = "\{\"ip_address\":\"%s\", {\"port\":\"%s\", {\"connection_status\":\"online\", {\"message\":\"\"\}" % addr
+                # broadcast(server_socket, sock, json)
                 broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
              
             # a message from a client, not a new connection
@@ -46,6 +49,8 @@ def chat_server():
                         print "\r" + '[' + str(sock.getpeername()) + '] ' + data
 
                         # there is something in the socket
+                        # json = "\{\"ip_address\":\"%s\", {\"port\":\"%s\", {\"connection_status\":\"online\", {\"message\":\"" + data + "\"\}" % addr
+                        # broadcast(server_socket, sock, json)
                         broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)  
                     else:
                         
@@ -56,6 +61,8 @@ def chat_server():
                             SOCKET_LIST.remove(sock)
 
                         # at this stage, no data means probably the connection has been broken
+                        # json = "\{\"ip_address\":\"%s\", {\"port\":\"%s\", {\"connection_status\":\"offline\", {\"message\":\"\"\}" % addr
+                        # broadcast(server_socket, sock, json)
                         broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr) 
 
                 # exception 
@@ -63,6 +70,8 @@ def chat_server():
                     
                     print "Client (%s, %s) is offline\n" % addr
                         
+                    # json = "\{\"ip_address\":\"%s\", {\"port\":\"%s\", {\"connection_status\":\"offline\", {\"message\":\"\"\}" % addr
+                    # broadcast(server_socket, sock, json)
                     broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                     continue
 
@@ -82,6 +91,8 @@ def broadcast (server_socket, sock, message):
                 # broken socket, remove it
                 if socket in SOCKET_LIST:
                     SOCKET_LIST.remove(socket)
+                    # json = "\{\"ip_address\":\"%s\", {\"port\":\"%s\", {\"connection_status\":\"offline\", {\"message\":\"\"\}" % addr
+                    # broadcast(server_socket, sock, json)
                     broadcast(server_socket, sock, "Client (%s, %s) lost connection\n" % addr) 
  
 if __name__ == "__main__":
