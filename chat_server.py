@@ -2,7 +2,7 @@
  
 import sys, socket, select
 
-HOST = '' 
+HOST = '192.168.29.143' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
@@ -42,9 +42,15 @@ def chat_server():
                     # receiving data from the socket.
                     data = sock.recv(RECV_BUFFER)
                     if data:
+                        
+                        print "\r" + '[' + str(sock.getpeername()) + '] ' + data
+
                         # there is something in the socket
                         broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)  
                     else:
+                        
+                        print "Client (%s, %s) is offline\n" % addr
+                        
                         # remove the socket that's broken    
                         if sock in SOCKET_LIST:
                             SOCKET_LIST.remove(sock)
@@ -54,6 +60,9 @@ def chat_server():
 
                 # exception 
                 except:
+                    
+                    print "Client (%s, %s) is offline\n" % addr
+                        
                     broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                     continue
 
