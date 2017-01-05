@@ -3,7 +3,8 @@
 import sys, socket, select
 
 # HOST = '192.168.29.143' 
-HOST = '192.168.1.146' 
+#HOST = '192.168.1.146' 
+HOST = '192.168.1.149' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 5020
