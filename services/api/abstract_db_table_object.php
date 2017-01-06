@@ -57,15 +57,28 @@ class abstract_db_table_object extends abstract_model {
 
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 
-		$fields = null;
-		$values = null;
-		$table_name = $this->database_table_model->databaseTableName();
-		
-		$this->database_table_model->insertComponents($fields, $values);
-		$statement = "INSERT INTO " 
-			. DATABASE_NAME . "." . $table_name
-			. " ($fields) VALUES ($values) ";
-		$result = $this->db->execute($statement);
+		try {
+			$fields = null;
+			$values = null;
+			$table_name = $this->database_table_model->databaseTableName();
+			
+			$this->database_table_model->insertComponents($fields, $values);
+
+			if(empty($fields)) {
+				throw new exception("Action not allowed. No fields to add were specified.");
+			}
+			if(empty($values)) {
+				throw new exception("Action not allowed. No values to add were specified.");
+			}
+
+			$statement = "INSERT INTO " 
+				. DATABASE_NAME . "." . $table_name
+				. " ($fields) VALUES ($values) ";
+			$result = $this->db->execute($statement);
+		}
+		catch(exception $e) {
+			$result = log_service::error($e, __CLASS__, __FUNCTION__, $e->getMessage());
+		}
 		
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 
@@ -98,16 +111,29 @@ class abstract_db_table_object extends abstract_model {
 
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 
-		$fields = null;
-		$conditions = null;
-		$table_name = $this->database_table_model->databaseTableName();
-		
-		$this->database_table_model->updateComponents($fields, $conditions);
-		$statement = "UPDATE " 
-			. DATABASE_NAME . "." . $table_name
-			. " $fields $conditions ";
-		$result = $this->db->execute($statement);
-		
+		try {
+			$fields = null;
+			$conditions = null;
+			$table_name = $this->database_table_model->databaseTableName();
+			
+			$this->database_table_model->updateComponents($fields, $conditions);
+
+			if(empty($conditions)) {
+				throw new exception("Action not allowed. No record to update was specified.");
+			}
+			if(empty($fields)) {
+				throw new exception("Action not allowed. No fields to update were specified.");
+			}
+
+			$statement = "UPDATE " 
+				. DATABASE_NAME . "." . $table_name
+				. " $fields $conditions ";
+			$result = $this->db->execute($statement);
+		}
+		catch(exception $e) {
+			$result = log_service::error($e, __CLASS__, __FUNCTION__, $e->getMessage());
+		}
+
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 
 		return $result;
@@ -139,35 +165,23 @@ class abstract_db_table_object extends abstract_model {
 
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 
-		$conditions = null;
-		$table_name = $this->database_table_model->databaseTableName();
-		
-		$this->database_table_model->deleteComponents($conditions);
-		$statement = "DELETE FROM " 
-			. DATABASE_NAME . ".$table_name $conditions ";
-		$result = $this->db->execute($statement);
-		
-		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
+		try {
+			$conditions = null;
+			$table_name = $this->database_table_model->databaseTableName();
+			
+			$this->database_table_model->deleteComponents($conditions);
 
-		return $result;
-	}
+			if(empty($conditions)) {
+				throw new exception("Action not allowed. No record to delete was specified.");
+			}
 
-	public function start() {
-
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-
-		$result = $this->db->startTransaction();
-		
-		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
-
-		return $result;
-	}
-
-	public function commit() {
-
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-
-		$result = $this->db->endTransaction();
+			$statement = "DELETE FROM " 
+				. DATABASE_NAME . ".$table_name $conditions ";
+			$result = $this->db->execute($statement);
+		}
+		catch(exception $e) {
+			$result = log_service::error($e, __CLASS__, __FUNCTION__, $e->getMessage());
+		}
 		
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 

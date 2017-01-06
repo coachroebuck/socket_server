@@ -106,13 +106,12 @@ class service_execution extends abstract_model {
 	}
 
 	private function pre_add() {
-		$this->start();
+
 	}
 
 	private function post_add() {
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 		$result = $this->database_table_object->post_add();
-		$this->commit();
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 		return $result;
 	}
@@ -125,13 +124,12 @@ class service_execution extends abstract_model {
 	}
 
 	private function pre_update() {
-		$this->start();
+
 	}
 
 	private function post_update() {
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 		$result = $this->database_table_object->post_update();
-		$this->commit();
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 		return $result;
 	}
@@ -144,23 +142,16 @@ class service_execution extends abstract_model {
 	}
 
 	private function pre_delete() {
-		$this->start();
+
 	}
 
 	private function post_delete() {
-		$this->commit();		
+
 	}
 
 	private function start() {
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 		$result =  $this->database_table_object->start();
-		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
-		return $result;
-	}
-
-	private function commit() {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		$result =  $this->database_table_object->commit();
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 		return $result;
 	}

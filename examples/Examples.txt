@@ -1,17 +1,51 @@
+---------------------------------------------------------------------------------------------------------
+LANGUAGES
+---------------------------------------------------------------------------------------------------------
 curl -X GET http://localhost/sites/server/services/language
 curl -X GET http://localhost/sites/server/services/language?language_name=English
 curl -X POST -d language_name=German -d language_code=de -d native_language_name=Deutsche http://localhost/sites/server/services/language
-curl -X PUT -d language_id=27 -d language_name=fadf http://localhost/sites/server/services/language
-curl -X PUT -d language_id=27 -d native_language_name=fadf http://localhost/sites/server/services/language
-curl -X PUT -d language_id=27 -d language_name="Dutch" -d native_language_name="Dutch" http://localhost/sites/server/services/language
-curl -X DELETE -d language_id=27 http://localhost/sites/server/services/language
+curl -X PUT -d language_id=6 -d language_name=fadf http://localhost/sites/server/services/language
+curl -X PUT -d language_id=6 -d language_code=xx http://localhost/sites/server/services/language
+curl -X PUT -d language_id=6 -d native_language_name=fadf http://localhost/sites/server/services/language
+curl -X PUT -d language_id=6 -d language_name="Dutch" -d native_language_name="Dutch" -d language_code=nl http://localhost/sites/server/services/language
+curl -X DELETE -d language_id=6 http://localhost/sites/server/services/language
 
+curl -X POST http://localhost/sites/server/services/language
+curl -X PUT http://localhost/sites/server/services/language
+curl -X DELETE http://localhost/sites/server/services/language
+
+curl -X POST -d language_name="asdfasfadsf" http://localhost/sites/server/services/language
+curl -X PUT  -d language_name="asdfdsdf" http://localhost/sites/server/services/language
+curl -X DELETE -d language_name="asdfasdfds" http://localhost/sites/server/services/language
+
+curl -X POST -d language_name= http://localhost/sites/server/services/language
+curl -X PUT  -d language_name="" http://localhost/sites/server/services/language
+curl -X DELETE -d language_name=""  http://localhost/sites/server/services/language
+
+
+---------------------------------------------------------------------------------------------------------
+USER
+---------------------------------------------------------------------------------------------------------
 curl -X GET http://localhost/sites/server/services/user
 curl -X GET http://localhost/sites/server/services/user?email=coachroebuck@yahoo.com
-curl -X POST -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" http://localhost/sites/server/services/user
+curl -X POST -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/user
 curl -X PUT -d user_id=1 -d first_name=asdfsdfasd http://localhost/sites/server/services/user
 curl -X PUT -d user_id=1 -d last_name=asdfasdfdsf  http://localhost/sites/server/services/user
 curl -X PUT -d user_id=1 -d nickname="sdfadsfdsf" http://localhost/sites/server/services/user
 curl -X PUT -d user_id=1 -d email="developer@coachroebuck.com" http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d password=password http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/user
 curl -X DELETE -d user_id=1 http://localhost/sites/server/services/user
+
+curl -X POST http://localhost/sites/server/services/user
+curl -X PUT http://localhost/sites/server/services/user
+curl -X DELETE http://localhost/sites/server/services/user
+
+curl -X POST -d email="asdfasfadsf" http://localhost/sites/server/services/user
+curl -X PUT  -d email="asdfdsdf" http://localhost/sites/server/services/user
+curl -X DELETE -d email="asdfasdfds" http://localhost/sites/server/services/user
+
+curl -X POST -d email= http://localhost/sites/server/services/user
+curl -X PUT  -d email="" http://localhost/sites/server/services/user
+curl -X DELETE -d email=""  http://localhost/sites/server/services/user
+

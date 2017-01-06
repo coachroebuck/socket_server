@@ -47,30 +47,6 @@ class l2l_user_model extends abstract_db_table_model {
 			new abstract_table_column_model("last_modified_date", table_column_data_type::Number, null, null, null, null, null, null));
 		$this->table_columns = $table_columns;
 	}
-
-	public function queryComponents(&$fields, &$conditions) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildQueryComponents($this, $fields, $conditions);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
-
-	public function insertComponents(&$fields, &$values) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildInsertComponents($this, $fields, $values);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
-
-	public function updateComponents(&$fields, &$conditions) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildUpdateComponents($this, $fields, $conditions);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
-
-	public function deleteComponents(&$conditions) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildDeleteComponents($this, $conditions);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
 	
 	function __destruct()
 	{

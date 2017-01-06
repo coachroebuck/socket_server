@@ -65,6 +65,30 @@ class abstract_db_table_model extends abstract_model {
 		return $result;
 	}
 
+	public function queryComponents(&$fields, &$conditions) {
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+		self::buildQueryComponents($this, $fields, $conditions);
+		log_service::exit_method(__CLASS__, __FUNCTION__);
+	}
+
+	public function insertComponents(&$fields, &$values) {
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+		self::buildInsertComponents($this, $fields, $values);
+		log_service::exit_method(__CLASS__, __FUNCTION__);
+	}
+
+	public function updateComponents(&$fields, &$conditions) {
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+		self::buildUpdateComponents($this, $fields, $conditions);
+		log_service::exit_method(__CLASS__, __FUNCTION__);
+	}
+
+	public function deleteComponents(&$conditions) {
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+		self::buildDeleteComponents($this, $conditions);
+		log_service::exit_method(__CLASS__, __FUNCTION__);
+	}
+
 	protected function buildQueryComponents($object, &$fields, &$conditions) {
 
 		log_service::enter_method(__CLASS__, __FUNCTION__);
@@ -136,13 +160,19 @@ class abstract_db_table_model extends abstract_model {
 				$name = $table_column_model->name;
 				$data_type = $table_column_model->data_type;
 				$is_insertable = $table_column_model->is_insertable;
-				
+				$encrpytion_required = $table_column_model->encrpytion_required;
+
 				if(!empty($is_insertable) && !empty($_POST[$name])) {
 					$value = $_POST[$name];
 					$fields = empty($fields) ? $name : $fields . "," . $name;
 
 					if($data_type == table_column_data_type::Text) {
-						$value = "'" . addslashes($value) . "'";
+						if(!empty($encrpytion_required)) {
+							$value = "'" . addslashes(sha1($value)) . "'";
+						}
+						else {
+							$value = "'" . addslashes($value) . "'";
+						}
 					}
 					$values = empty($values) ? $value : $values . "," . $value;
 				}

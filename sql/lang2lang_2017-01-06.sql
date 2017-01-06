@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.11)
 # Database: lang2lang
-# Generation Time: 2017-01-06 15:27:33 +0000
+# Generation Time: 2017-01-06 21:41:14 +0000
 # ************************************************************
 
 
@@ -57,26 +57,30 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `l2l_user`;
 
 CREATE TABLE `l2l_user` (
-  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `first_name` text NOT NULL,
-  `last_name` text NOT NULL,
   `email` text NOT NULL,
   `nickname` text NOT NULL,
   `last_change_user_id` int(11) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_modified_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`email`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOCK TABLES `l2l_user` WRITE;
-/*!40000 ALTER TABLE `l2l_user` DISABLE KEYS */;
 
-INSERT INTO `l2l_user` (`user_id`, `first_name`, `last_name`, `email`, `nickname`, `last_change_user_id`, `date_created`, `last_modified_date`)
-VALUES
-	(1,'Michael','Roebuck','coachroebuck@yahoo.com','Coach Roebuck',NULL,'2017-01-06 07:57:27',NULL);
 
-/*!40000 ALTER TABLE `l2l_user` ENABLE KEYS */;
-UNLOCK TABLES;
+# Dump of table oauth_access_tokens
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_access_tokens`;
+
+CREATE TABLE `oauth_access_tokens` (
+  `access_token` varchar(40) NOT NULL,
+  `client_id` varchar(80) NOT NULL,
+  `user_id` varchar(190) DEFAULT NULL,
+  `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `scope` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`access_token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 
 # Dump of table oauth_authorization_codes
@@ -177,15 +181,6 @@ CREATE TABLE `oauth_users` (
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOCK TABLES `oauth_users` WRITE;
-/*!40000 ALTER TABLE `oauth_users` DISABLE KEYS */;
-
-INSERT INTO `oauth_users` (`username`, `password`, `first_name`, `last_name`)
-VALUES
-	('coachroebuck@yahoo.com','fb0afde9e16521cce8d1c8c84ea16297b0421e91','Michael','Roebuck');
-
-/*!40000 ALTER TABLE `oauth_users` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 

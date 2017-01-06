@@ -3,6 +3,7 @@
 class log_service {
 	
 	static private $trace = 1;
+	static private $error_code = 200;
 
 	// static public function getLogUrl() {
 	// 	$url = str_replace("services/", "", self::$data["directory"]);
@@ -10,6 +11,10 @@ class log_service {
 	// 	return $url;
 	// }
 	
+	static public function error_code() {
+		return log_service::$error_code;
+	}
+
 	static public function enter_method($className, $functionName, $input = null)
 	{
 		if(APPLICATION_TRACE == 1)
@@ -32,6 +37,7 @@ class log_service {
 		{
 			$systemMessage = "ERROR! " . $className . "::" . $functionName . "(): " . $e->getMessage();
 			log_service::writeln($systemMessage);
+			log_service::$error_code = 417;
 			return service_messaging::error($guiErrorMessage);
 		}
 	}

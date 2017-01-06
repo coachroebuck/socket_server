@@ -33,32 +33,8 @@ class oauth_users_model extends abstract_db_table_model {
 				true, true, null, null));
 		array_push($table_columns, 
 			new abstract_table_column_model("password", table_column_data_type::Text, null,  
-				null, true, true, null, null));
+				null, true, true, null, null, null, true));
 		$this->table_columns = $table_columns;
-	}
-
-	public function queryComponents(&$fields, &$conditions) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildQueryComponents($this, $fields, $conditions);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
-
-	public function insertComponents(&$fields, &$values) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildInsertComponents($this, $fields, $values);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
-
-	public function updateComponents(&$fields, &$conditions) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildUpdateComponents($this, $fields, $conditions);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
-	}
-
-	public function deleteComponents(&$conditions) {
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		parent::buildDeleteComponents($this, $conditions);
-		log_service::exit_method(__CLASS__, __FUNCTION__);
 	}
 	
 	function __destruct()
