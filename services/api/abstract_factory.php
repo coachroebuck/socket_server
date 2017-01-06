@@ -15,6 +15,10 @@ class abstract_factory {
 		if(class_exists($obj)) {
 			return new $obj();
 		}
+		$obj = "oauth_" . $name . "_model";
+		if(class_exists($obj)) {
+			return new $obj();
+		}
 		return null;
 	}
 }

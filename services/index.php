@@ -8,6 +8,9 @@ require_once ( 'include_files.php' );
 class index {	
 	
 	public function execute() {
+		
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+
 		$result = null;
 
 		if(isset($_GET["service"])) {
@@ -31,15 +34,20 @@ class index {
 			$result = service_messaging::error("Service name required.");
 		}
 
+		log_service::exit_method(__CLASS__, __FUNCTION__);
+
 		return $result;
 	}
 }
 
+
+log_service::log("------------------------------------------------------------------------------------");
 $index = new index();
 $result = $index->execute();
 header("content-type:text/html; charset=utf-8"); 
 echo $result;
 unset($result);
 unset($index);
+log_service::log("------------------------------------------------------------------------------------\n\n");
 
 ?>

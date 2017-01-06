@@ -2,3 +2,9 @@ RewriteEngine On
 
 RewriteRule ^/?language?(.*)$ index.php?service=language&$1 [L,QSA]
 RewriteRule ^/?user?(.*)$ index.php?service=user&$1 [L,QSA]
+RewriteRule ^/?authorization_codes?(.*)$ index.php?service=authorization_codes&$1 [L,QSA]
+RewriteRule ^/?clients?(.*)$ index.php?service=clients&$1 [L,QSA]
+RewriteRule ^/?jwt?(.*)$ index.php?service=jwt&$1 [L,QSA]
+RewriteRule ^/?refresh_tokens?(.*)$ index.php?service=refresh_tokens&$1 [L,QSA]
+RewriteRule ^/?scopes?(.*)$ index.php?service=scopes&$1 [L,QSA]
+RewriteRule ^/?users?(.*)$ index.php?service=users&$1 [L,QSA]

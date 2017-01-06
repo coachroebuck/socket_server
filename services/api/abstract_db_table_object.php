@@ -7,14 +7,19 @@ require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_model.php");
 class abstract_db_table_object extends abstract_model {
 	
 	private $db;
-	private $l2l_database_table_model;
+	private $database_table_model;
 	
 	public function initialize(
 		$db = null, 
-		$l2l_database_table_model = null)
+		$database_table_model = null)
 	{
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+
 		$this->db = $db;
-		$this->l2l_database_table_model = $l2l_database_table_model;
+		$this->database_table_model = $database_table_model;
+		
+		$str = "db=[" . isset($db) . "] database_table_model=[" . isset($database_table_model) . "]";
+		log_service::exit_method(__CLASS__, __FUNCTION__, $str);
 	}
 
 	public function total() {
@@ -35,10 +40,10 @@ class abstract_db_table_object extends abstract_model {
 
 		$fields = null;
 		$conditions = null;
-		$alias = $this->l2l_database_table_model->databaseTableAlias();
-		$table_name = $this->l2l_database_table_model->databaseTableName();
+		$alias = $this->database_table_model->databaseTableAlias();
+		$table_name = $this->database_table_model->databaseTableName();
 		
-		$this->l2l_database_table_model->queryComponents($fields, $conditions);
+		$this->database_table_model->queryComponents($fields, $conditions);
 		$query = "$fields FROM " 
 			. DATABASE_NAME . ".$table_name $alias $conditions";
 		$result = $this->db->query($query);
@@ -54,9 +59,9 @@ class abstract_db_table_object extends abstract_model {
 
 		$fields = null;
 		$values = null;
-		$table_name = $this->l2l_database_table_model->databaseTableName();
+		$table_name = $this->database_table_model->databaseTableName();
 		
-		$this->l2l_database_table_model->insertComponents($fields, $values);
+		$this->database_table_model->insertComponents($fields, $values);
 		$statement = "INSERT INTO " 
 			. DATABASE_NAME . "." . $table_name
 			. " ($fields) VALUES ($values) ";
@@ -74,11 +79,11 @@ class abstract_db_table_object extends abstract_model {
 		$fields = null;
 		$conditions = null;
 		$id = $this->db->getLatestAutoIncrementId();
-		$alias = $this->l2l_database_table_model->databaseTableAlias();
-		$table_name = $this->l2l_database_table_model->databaseTableName();
-		$primary_key = $this->l2l_database_table_model->primaryKey();
+		$alias = $this->database_table_model->databaseTableAlias();
+		$table_name = $this->database_table_model->databaseTableName();
+		$primary_key = $this->database_table_model->primaryKey();
 		
-		$this->l2l_database_table_model->queryComponents($fields, $conditions);
+		$this->database_table_model->queryComponents($fields, $conditions);
 		$query = "$fields FROM " 
 			. DATABASE_NAME . "." . $table_name
 			. " $alias WHERE $primary_key = $id";
@@ -95,9 +100,9 @@ class abstract_db_table_object extends abstract_model {
 
 		$fields = null;
 		$conditions = null;
-		$table_name = $this->l2l_database_table_model->databaseTableName();
+		$table_name = $this->database_table_model->databaseTableName();
 		
-		$this->l2l_database_table_model->updateComponents($fields, $conditions);
+		$this->database_table_model->updateComponents($fields, $conditions);
 		$statement = "UPDATE " 
 			. DATABASE_NAME . "." . $table_name
 			. " $fields $conditions ";
@@ -114,12 +119,12 @@ class abstract_db_table_object extends abstract_model {
 
 		$fields = null;
 		$conditions = null;
-		$alias = $this->l2l_database_table_model->databaseTableAlias();
-		$table_name = $this->l2l_database_table_model->databaseTableName();
-		$primary_key = $this->l2l_database_table_model->primaryKey();
-		$value = $this->l2l_database_table_model->valueOfPrimaryKey();
+		$alias = $this->database_table_model->databaseTableAlias();
+		$table_name = $this->database_table_model->databaseTableName();
+		$primary_key = $this->database_table_model->primaryKey();
+		$value = $this->database_table_model->valueOfPrimaryKey();
 		
-		$this->l2l_database_table_model->queryComponents($fields, $conditions);
+		$this->database_table_model->queryComponents($fields, $conditions);
 		$query = "$fields FROM " 
 			. DATABASE_NAME . "." . $table_name
 			. " $alias WHERE $primary_key = $value";
@@ -135,9 +140,9 @@ class abstract_db_table_object extends abstract_model {
 		log_service::enter_method(__CLASS__, __FUNCTION__);
 
 		$conditions = null;
-		$table_name = $this->l2l_database_table_model->databaseTableName();
+		$table_name = $this->database_table_model->databaseTableName();
 		
-		$this->l2l_database_table_model->deleteComponents($conditions);
+		$this->database_table_model->deleteComponents($conditions);
 		$statement = "DELETE FROM " 
 			. DATABASE_NAME . ".$table_name $conditions ";
 		$result = $this->db->execute($statement);
