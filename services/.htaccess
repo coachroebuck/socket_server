@@ -1,4 +1,4 @@
 RewriteEngine On
 
 RewriteRule ^/?language?(.*)$ index.php?service=language&$1 [L,QSA]
-#RewriteRule ^/?language?(.*)$ api/language/?$1 [L,QSA]
+RewriteRule ^/?user?(.*)$ index.php?service=user&$1 [L,QSA]

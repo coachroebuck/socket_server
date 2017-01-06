@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.11)
 # Database: lang2lang
-# Generation Time: 2017-01-06 14:44:09 +0000
+# Generation Time: 2017-01-06 15:04:28 +0000
 # ************************************************************
 
 
@@ -57,16 +57,135 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `l2l_user`;
 
 CREATE TABLE `l2l_user` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `first_name` text NOT NULL,
   `last_name` text NOT NULL,
   `email` text NOT NULL,
   `nickname` text NOT NULL,
+  `last_change_user_id` int(11) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_modified_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+LOCK TABLES `l2l_user` WRITE;
+/*!40000 ALTER TABLE `l2l_user` DISABLE KEYS */;
+
+INSERT INTO `l2l_user` (`user_id`, `first_name`, `last_name`, `email`, `nickname`, `last_change_user_id`, `date_created`, `last_modified_date`)
+VALUES
+	(1,'Michael','Roebuck','coachroebuck@yahoo.com','Coach Roebuck',NULL,'2017-01-06 07:57:27',NULL);
+
+/*!40000 ALTER TABLE `l2l_user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_authorization_codes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_authorization_codes`;
+
+CREATE TABLE `oauth_authorization_codes` (
+  `authorization_code` varchar(40) NOT NULL,
+  `client_id` varchar(80) NOT NULL,
+  `user_id` varchar(190) DEFAULT NULL,
+  `redirect_uri` varchar(2000) DEFAULT NULL,
+  `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `scope` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`authorization_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table oauth_clients
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_clients`;
+
+CREATE TABLE `oauth_clients` (
+  `client_id` varchar(80) NOT NULL,
+  `client_secret` varchar(80) NOT NULL,
+  `redirect_uri` varchar(2000) NOT NULL,
+  `grant_types` varchar(80) DEFAULT NULL,
+  `scope` varchar(100) DEFAULT NULL,
+  `user_id` varchar(190) DEFAULT NULL,
+  PRIMARY KEY (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOCK TABLES `oauth_clients` WRITE;
+/*!40000 ALTER TABLE `oauth_clients` DISABLE KEYS */;
+
+INSERT INTO `oauth_clients` (`client_id`, `client_secret`, `redirect_uri`, `grant_types`, `scope`, `user_id`)
+VALUES
+	('lang2lang_client','8B7C2C31C9DB56B74A8D5216777A1','https://lang2lang.com',NULL,NULL,NULL);
+
+/*!40000 ALTER TABLE `oauth_clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_jwt
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_jwt`;
+
+CREATE TABLE `oauth_jwt` (
+  `client_id` varchar(80) NOT NULL,
+  `subject` varchar(80) DEFAULT NULL,
+  `public_key` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table oauth_refresh_tokens
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_refresh_tokens`;
+
+CREATE TABLE `oauth_refresh_tokens` (
+  `refresh_token` varchar(40) NOT NULL,
+  `client_id` varchar(80) NOT NULL,
+  `user_id` varchar(190) DEFAULT NULL,
+  `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `scope` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`refresh_token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table oauth_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_scopes`;
+
+CREATE TABLE `oauth_scopes` (
+  `scope` text,
+  `is_default` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table oauth_users
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_users`;
+
+CREATE TABLE `oauth_users` (
+  `username` varchar(190) NOT NULL DEFAULT '',
+  `password` varchar(2000) DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOCK TABLES `oauth_users` WRITE;
+/*!40000 ALTER TABLE `oauth_users` DISABLE KEYS */;
+
+INSERT INTO `oauth_users` (`username`, `password`, `first_name`, `last_name`)
+VALUES
+	('coachroebuck@yahoo.com','fb0afde9e16521cce8d1c8c84ea16297b0421e91','Michael','Roebuck');
+
+/*!40000 ALTER TABLE `oauth_users` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 

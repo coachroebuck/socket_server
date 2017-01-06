@@ -4,3 +4,11 @@ curl -X PUT -d language_id=27 -d language_name=fadf http://localhost/sites/serve
 curl -X PUT -d language_id=27 -d native_language_name=fadf http://localhost/sites/server/services/language
 curl -X PUT -d language_id=27 -d language_name="Dutch" -d native_language_name="Dutch" http://localhost/sites/server/services/language
 curl -X DELETE -d language_id=27 http://localhost/sites/server/services/language
+
+curl -X GET http://localhost/sites/server/services/user
+curl -X POST -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d first_name=asdfsdfasd http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d last_name=asdfasdfdsf  http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d nickname="sdfadsfdsf" http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d email="developer@coachroebuck.com" http://localhost/sites/server/services/user
+curl -X PUT -d user_id=1 -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" http://localhost/sites/server/services/user
