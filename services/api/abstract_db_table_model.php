@@ -36,6 +36,35 @@ class abstract_db_table_model extends abstract_model {
 		return $this->primary_key;
 	}
 
+	public function valueOfPrimaryKey() {
+
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+
+		$result = null;
+		
+		if(property_exists($this, "table_columns")) {
+			$table_columns = $this->table_columns;
+				
+			foreach($table_columns as $key => $table_column_model) {
+				$name = $table_column_model->name;
+				$data_type = $table_column_model->data_type;
+				$condition_info = $table_column_model->condition_info;
+				
+				if(strcmp($name, $this->primary_key) == 0) {
+					$result = $_POST[$name];
+					if($data_type == table_column_data_type::Text) {
+						$value = "'" . addslashes($value) . "'";
+					}
+					break;
+				}
+			}
+		}
+		
+		log_service::exit_method(__CLASS__, __FUNCTION__);
+
+		return $result;
+	}
+
 	protected function buildQueryComponents($object, &$fields, &$conditions) {
 
 		log_service::enter_method(__CLASS__, __FUNCTION__);
@@ -149,51 +178,41 @@ class abstract_db_table_model extends abstract_model {
 		
 		$array = get_object_vars($object);
 
-		$fields = " SELECT ";
-		foreach($array as $key => $value) {
-			//TODO: Read from an object
-			if(isset($value)) {
-				self::appendUpdateStatementText($conditions, $key, $value, $alias);
-			}
-			else if(isset($_GET[$key])) {
-				self::appendUpdateStatementText($conditions, $key, $_GET[$key], $alias);
-			}
-
-			if(isset($value)) {
-				self::appendConditionsText($conditions, $key, $value, null);
-			}
-			else if(isset($_GET[$key])) {
-				self::appendConditionsText($conditions, $key, $_GET[$key], null);
+		if(property_exists($object, "table_columns")) {
+			$table_columns = $object->table_columns;
+			$distinct_retrieval_key = $object->distinct_retrieval_key;
+				
+			foreach($table_columns as $key => $table_column_model) {
+				$name = $table_column_model->name;
+				$data_type = $table_column_model->data_type;
+				$is_insertable = $table_column_model->is_insertable;
+				$condition_info = $table_column_model->condition_info;
+				$is_delete_identifier = $table_column_model->is_delete_identifier;
+				
+				if(!empty($is_delete_identifier) && !empty($_POST[$name])) {
+					$value = $_POST[$name];
+					$this->appendConditionsText($conditions, $condition_info, $name, $data_type, $value, null);
+				}
+				else if(!empty($is_insertable) && !empty($_POST[$name])) {
+					$value = $_POST[$name];
+					$this->appendUpdateStatementText($fields, $name, $data_type, $value);
+				}
 			}
 		}
 
-		$fields = rtrim($fields, ", ");
-		
-		log_service::exit_method(__CLASS__, __FUNCTION__);
+		log_service::exit_method(__CLASS__, __FUNCTION__, "conditions=$conditions");
 	}
 
-	private function appendUpdateStatementText(&$input, $key, $value) {
+	private function appendUpdateStatementText(&$input, $key, $data_type, $value) {
 
 		log_service::enter_method(__CLASS__, __FUNCTION__);
+
+		if($data_type == table_column_data_type::Text) {
+			$value = "'" . addslashes($value) . "'";
+		}
+
+		$input = empty($input) ? " SET $key=$value " : $input . ", $key=$value ";
 		
-		if(!isset($input) || strlen($input) == 0) {
-
-			if(is_string($value)) {
-				$input = " SET $key = '" . addslashes($value) . "' ";
-			}
-			else {
-				$input = " SET $key = $value ";
-			}
-		}
-		else {
-			if(is_string($value)) {
-				$input .= " , $key = '" . addslashes($value) . "' ";
-			}
-			else {
-				$input .= " , $key = $value ";
-			}
-		}
-
 		log_service::exit_method(__CLASS__, __FUNCTION__);
 	}
 

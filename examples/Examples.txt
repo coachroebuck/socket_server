@@ -1,4 +1,6 @@
 curl -X GET http://localhost/sites/server/services/language
 curl -X POST -d language_name=German -d language_code=de -d native_language_name=Deutsche http://localhost/sites/server/services/language
-
-curl -X DELETE -d language_id=24 http://localhost/sites/server/services/language
+curl -X PUT -d language_id=27 -d language_name=fadf http://localhost/sites/server/services/language
+curl -X PUT -d language_id=27 -d native_language_name=fadf http://localhost/sites/server/services/language
+curl -X PUT -d language_id=27 -d language_name="Dutch" -d native_language_name="Dutch" http://localhost/sites/server/services/language
+curl -X DELETE -d language_id=27 http://localhost/sites/server/services/language

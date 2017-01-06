@@ -100,8 +100,30 @@ class abstract_db_table_object extends abstract_model {
 		$this->l2l_database_table_model->updateComponents($fields, $conditions);
 		$statement = "UPDATE " 
 			. DATABASE_NAME . "." . $table_name
-			. " $fields WHERE $conditions ";
+			. " $fields $conditions ";
 		$result = $this->db->execute($statement);
+		
+		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
+
+		return $result;
+	}
+
+	public function post_update() {
+
+		log_service::enter_method(__CLASS__, __FUNCTION__);
+
+		$fields = null;
+		$conditions = null;
+		$alias = $this->l2l_database_table_model->databaseTableAlias();
+		$table_name = $this->l2l_database_table_model->databaseTableName();
+		$primary_key = $this->l2l_database_table_model->primaryKey();
+		$value = $this->l2l_database_table_model->valueOfPrimaryKey();
+		
+		$this->l2l_database_table_model->queryComponents($fields, $conditions);
+		$query = "$fields FROM " 
+			. DATABASE_NAME . "." . $table_name
+			. " $alias WHERE $primary_key = $value";
+		$result = $this->db->query($query);
 		
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
 

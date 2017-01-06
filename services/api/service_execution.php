@@ -130,9 +130,10 @@ class service_execution extends abstract_model {
 
 	private function post_update() {
 		log_service::enter_method(__CLASS__, __FUNCTION__);
-		$result = $this->database_table_object->get();
+		$result = $this->database_table_object->post_update();
 		$this->commit();
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
+		return $result;
 	}
 
 	private function delete() {
