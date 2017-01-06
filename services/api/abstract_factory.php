@@ -4,14 +4,10 @@ defined( '_RMEXEC' ) or die( 'Restricted access' );
 
 class abstract_factory {
 
-	static public function database_object($name, $db, $table_name, $model) {
-		$obj = new abstract_db_object();
-		$obj->initialize($db, $table_name, $model);
+	static public function database_object($db, $model) {
+		$obj = new abstract_db_table_object();
+		$obj->initialize($db, $model);
 		return $obj;
-	}
-
-	static public function database_table_name($name) {
-		return "l2l_" . $name;
 	}
 
 	static public function database_model($name) {

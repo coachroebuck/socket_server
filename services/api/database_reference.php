@@ -274,6 +274,15 @@ class database_reference {
 		
 		return $result;	
 	}
+
+	//************************************************************************************
+	public function getLatestAutoIncrementId() {
+		if(!empty($this->dblink)) {
+			$mysqli = $this->dblink;
+			return $mysqli->insert_id;
+		}
+		return null;
+	}
 	
 	//************************************************************************************
 	public function getNextAutoIncrementNumber($table)

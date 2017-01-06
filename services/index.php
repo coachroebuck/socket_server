@@ -17,10 +17,7 @@ class index {
 			$result = $database_reference->open();
 			if(!isset($result)) {
 				$database_model = abstract_factory::database_model($service);
-				$database_table_name = abstract_factory::database_table_name($service);
-				$database_object = abstract_factory::database_object($service, 
-					$database_reference, 
-					$database_table_name,
+				$database_object = abstract_factory::database_object($database_reference, 
 					$database_model);
 				
 				$service_execution = new service_execution($database_object);

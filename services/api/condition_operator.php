@@ -3,7 +3,7 @@
 // no direct access
 defined( '_RMEXEC' ) or die( 'Restricted access' );
 
-abstract class whereOperator
+abstract class condition_operator
 {
     const Equal 				= 0;
     const NotEqual 				= 1;
@@ -17,6 +17,9 @@ abstract class whereOperator
     const NotNull               = 9;
     const Is                    = 10;
     const IsNot                 = 11;
+    const RegExp                = 12;
+    const NotRegExp             = 13;
+    const RegExpLike            = 14;
 }
 
 ?>
