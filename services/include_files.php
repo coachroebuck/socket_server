@@ -1,42 +1,27 @@
 <?php
-// Set flag that this is a parent file
-define( '_RMEXEC', 1 );
 
-//set the path
-define('RMPATH_BASE', dirname(__FILE__) );
+// no direct access
+defined( '_RMEXEC' ) or die( 'Restricted access' );
 
-//set the directory separator
-define( 'DS', DIRECTORY_SEPARATOR );
+require_once ( 'definitions.php' );
 
-require_once ( RMPATH_BASE.DS.'definitions.php' );
+function include_files($dirname, $recursiveSearch = true)
+{
+	foreach (scandir($dirname) as $filename) {
+	    $path = $dirname . $filename;
+	    if(is_dir($path) && strrpos($path, '.') != strlen($path) - 1 && $recursiveSearch)
+	    {
+	    	include_files($path . DS);
+	    }
+	    else if (is_file($path)) {
+	    	$pathinfo = pathinfo($path);
+	    	if(strcmp($pathinfo['extension'], "php") == 0) {
+		        require_once($path);
+	    	}
+	    }
+	}
+}
 
-// define( 'SERVICES_DIRECTORY', "api".DS."v".API_VERSION);
-// define( 'DB_OBJECTS_DIRECTORY', "api".DS."v".API_VERSION .DS."db");
-// define( 'CONFIG_DIRECTORY', "api".DS."v".API_VERSION.DS."config");
-// define( 'PHOTOS_DIRECTORY', "photos");
-// define( 'BIN_DIRECTORY', "bin");
+include_files(dirname(__FILE__).DS.API_DIRECTORY.DS);
 
-// require_once ( RMPATH_BASE.DS.'bin'.DS.'GoogleMapsGeocoder.php' );
-
-// function include_files($dirname, $recursiveSearch = true)
-// {
-// 	foreach (scandir($dirname) as $filename) {
-// 	    $path = $dirname . $filename;
-// 	    if (is_file($path)) {
-// 	    	$pathinfo = pathinfo($path);
-// 	    	if(strcmp($pathinfo['extension'], "php") == 0 && strcmp($pathinfo['filename'], "index") != 0) {
-// 		        require_once($path);
-// 	    	}
-// 	    }
-// 	    else if(is_dir($path) && strrpos($path, '.') != strlen($path) - 1 && $recursiveSearch)
-// 	    {
-// 	    	include_files($path . DS);
-// 	    }
-// 	}
-// }
-
-// include_files(dirname(__FILE__).DS.SERVICES_DIRECTORY.DS);
-// include_files(dirname(__FILE__).DS.DB_OBJECTS_DIRECTORY.DS);
-// include_files(dirname(__FILE__).DS.CONFIG_DIRECTORY.DS);
-// include_files(dirname(__FILE__).DS.BIN_DIRECTORY.DS, false);
 ?>
