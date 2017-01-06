@@ -42,9 +42,9 @@ class l2l_user_model extends abstract_db_table_model {
 		array_push($table_columns, 
 			new abstract_table_column_model("last_change_user_id", table_column_data_type::Number, null, null, null, null, null, null));
 		array_push($table_columns, 
-			new abstract_table_column_model("date_created", "number", null, null, true, null, null, null));
+			new abstract_table_column_model("date_created", table_column_data_type::Number, null, null, null, null, null, null));
 		array_push($table_columns, 
-			new abstract_table_column_model("last_modified_date", "number", null, null, true, null, null, null));
+			new abstract_table_column_model("last_modified_date", table_column_data_type::Number, null, null, null, null, null, null));
 		$this->table_columns = $table_columns;
 	}
 

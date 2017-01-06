@@ -13,6 +13,7 @@ class abstract_table_column_model extends abstract_model {
 	public $is_retrievable;
 	public $update_info;
 	public $is_delete_identifier;
+	public $column_alias;
 	
 
 	function __construct(
@@ -23,7 +24,8 @@ class abstract_table_column_model extends abstract_model {
 		$is_retrievable = null,
 		$is_insertable = null,
 		$update_info = null,
-		$is_delete_identifier = null)
+		$is_delete_identifier = null,
+		$column_alias = null)
 	{
 		$this->name = $name;
 		$this->data_type = $data_type;
@@ -33,6 +35,7 @@ class abstract_table_column_model extends abstract_model {
 		$this->is_insertable = $is_insertable;
 		$this->update_info = $update_info;
 		$this->is_delete_identifier = $is_delete_identifier;
+		$this->column_alias = $column_alias;
 	}
 	
 	function __destruct()

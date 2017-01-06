@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.11)
 # Database: lang2lang
-# Generation Time: 2017-01-06 15:04:28 +0000
+# Generation Time: 2017-01-06 15:27:33 +0000
 # ************************************************************
 
 
@@ -31,7 +31,7 @@ CREATE TABLE `l2l_language` (
   `language_name` text NOT NULL,
   `language_code` text NOT NULL,
   `native_language_name` text NOT NULL,
-  `language_change_user_id` int(11) DEFAULT NULL,
+  `last_change_user_id` int(11) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_modified_date` datetime DEFAULT NULL,
   PRIMARY KEY (`language_id`)
@@ -40,7 +40,7 @@ CREATE TABLE `l2l_language` (
 LOCK TABLES `l2l_language` WRITE;
 /*!40000 ALTER TABLE `l2l_language` DISABLE KEYS */;
 
-INSERT INTO `l2l_language` (`language_id`, `language_name`, `language_code`, `native_language_name`, `language_change_user_id`, `date_created`, `last_modified_date`)
+INSERT INTO `l2l_language` (`language_id`, `language_name`, `language_code`, `native_language_name`, `last_change_user_id`, `date_created`, `last_modified_date`)
 VALUES
 	(1,'English','en','English',NULL,'2017-01-05 14:25:38',NULL),
 	(2,'Spanish','es','Español',NULL,'2017-01-05 14:25:38',NULL),

@@ -79,13 +79,18 @@ class abstract_db_table_model extends abstract_model {
 				$data_type = $table_column_model->data_type;
 				$is_retrievable = $table_column_model->is_retrievable;
 				$condition_info = $table_column_model->condition_info;
+				$column_alias = $table_column_model->column_alias;
 				
 				if(isset($is_retrievable)) {
 					if(!isset($fields) || strlen($fields) == 0) {
-						$fields = "SELECT $distinct_retrieval_key $alias$name";
+						$fields = " SELECT $distinct_retrieval_key $alias$name ";
 					}
 					else {
-						$fields .= ",$alias$name";
+						$fields .= " ,$alias$name ";
+					}
+
+					if(!empty($column_alias)) {
+						$fields .= " AS $column_alias ";
 					}
 				}
 				
@@ -145,31 +150,6 @@ class abstract_db_table_model extends abstract_model {
 		}
 
 		log_service::exit_method(__CLASS__, __FUNCTION__, "fields=$fields values=$values");
-	}
-
-	private function appendInsertText(&$input, $key, $value) {
-
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-		
-		if(!isset($input) || strlen($input) == 0) {
-
-			if(is_string($value)) {
-				$input = " '" . addslashes($value) . "', ";
-			}
-			else {
-				$input = " $value, ";
-			}
-		}
-		else {
-			if(is_string($value)) {
-				$input .= " '" . addslashes($value) . "', ";
-			}
-			else {
-				$input .= " $value, ";
-			}
-		}
-
-		log_service::exit_method(__CLASS__, __FUNCTION__);
 	}
 
 	protected function buildUpdateComponents($object, &$fields, &$conditions) {
