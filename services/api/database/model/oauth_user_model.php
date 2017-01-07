@@ -2,15 +2,9 @@
 // no direct access
 defined( '_RMEXEC' ) or die( 'Restricted access' );
 
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_condition_model.php");
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_db_table_model.php");
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_table_column_model.php");
-
 //THIS IS THE ODD-BALL OBJECT. I was forced to drop the "s" in "oauth_users"
 //in order to achieve the proper json key of "user"
 class oauth_user_model extends abstract_db_table_model {
-	
-	public $table_columns;
 	
 	function __construct()
 	{

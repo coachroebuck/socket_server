@@ -15,6 +15,8 @@ define( 'API_DIRECTORY', "api");
 
 define( 'BIN_DIRECTORY', "bin");
 
+define('DATABASE_DIRECTORY', 'database');
+
 define('APP_TRACE_ENABLED', 1);
 
 $isLocalHost = strpos($_SERVER['HTTP_HOST'], 'localhost') > -1

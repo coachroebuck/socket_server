@@ -81,12 +81,17 @@ LOGIN
 curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=password -d  username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/login
 
 ---------------------------------------------------------------------------------------------------------
+REFRESH TOKEN
+---------------------------------------------------------------------------------------------------------
+curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=refresh_token -d access_token=95701349ab48d3e33c6549f3ea62400be0a2b912 -d refresh_token=871799e1b4737607bbf4f6c3a591d9d07192ae25 http://localhost/sites/server/services/login
+
+---------------------------------------------------------------------------------------------------------
 LOGOUT
 ---------------------------------------------------------------------------------------------------------
 curl -X POST -d token=<access_token|refresh_token> http://localhost/sites/server/services/logout
 
 Example
-curl -X POST -d token=aee6137a929d08656a0c95180bb4c172dd9acd63 http://localhost/sites/server/services/logout
-curl -X POST -d token=a87553ed138eb981a800c9bc383f91f5c137a2b4 http://localhost/sites/server/services/logout
+curl -X POST -d token=1cb3c2fa63d3f7541381732c69c8c3b408b4b272 http://localhost/sites/server/services/logout
+curl -X POST -d token=89e46fb8ac2a59bb4e29d300fb84bfac51e5fc42 http://localhost/sites/server/services/logout
 
 reference: https://github.com/bshaffer/oauth2-server-php/pull/586/files

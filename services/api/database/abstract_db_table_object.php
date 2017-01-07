@@ -2,8 +2,6 @@
 // no direct access
 defined( '_RMEXEC' ) or die( 'Restricted access' );
 
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_model.php");
-
 class abstract_db_table_object extends abstract_model {
 	
 	private $db;

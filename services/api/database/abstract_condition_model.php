@@ -2,7 +2,7 @@
 // no direct access
 defined( '_RMEXEC' ) or die( 'Restricted access' );
 
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_model.php");
+require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . DATABASE_DIRECTORY . DS . 'abstract_model.php' );
 
 class abstract_condition_model extends abstract_model {
 	public $operator;
@@ -20,52 +20,6 @@ class abstract_condition_model extends abstract_model {
 		$this->operand = $operand;
 		$this->minimum = $minimum;
 		$this->maximum = $maximum;
-	}
-
-	public function operatorText() {
-
-		$result = "";
-
-		switch($comparison)
-		{
-			case condition_operator::Equal:
-			$result .= "  =  ";
-			break;
-			case condition_operator::NotEqual:
-			$result .= "  <>  ";
-			break;
-			case condition_operator::GreaterThan:
-			$result .= "  >  ";
-			break;
-			case condition_operator::LessThan:
-			$result .= "  <  ";
-			break;
-			case condition_operator::GreaterThanOrEqual:
-			$result .= "  >=  ";
-			break;
-			case condition_operator::LessThanOrEqual:
-			$result .= "  <=  ";
-			break;
-			case condition_operator::Between:
-			$result .= "  BETWEEN  ";
-			break;
-			case condition_operator::Like:
-			$result .= "  LIKE  ";
-			break;
-			case condition_operator::In:
-			$result .= "  IN ";
-			break;
-			case condition_operator::Is:
-			$result .= "  IS  ";
-			break;
-			case condition_operator::IsNot:
-			$result .= "  IS NOT  ";
-			break;
-			default:
-			break;
-		}
-
-		return $result;
 	}
 
 	public function createConditionText(

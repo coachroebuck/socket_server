@@ -27,7 +27,7 @@ curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 TO LOGOUT, The value of "token" can either be an access_token or a refresh_token.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-curl -X POST -d token=cc5a1280a488e94a917bc181516e26de80de69eb http://localhost/sites/server/services/logout
+curl -X POST -d token=1961d20931858683efdf8a9044a2f209e19b0f53 http://localhost/sites/server/services/logout
 
 {"logout":{"revoked":true}}
 

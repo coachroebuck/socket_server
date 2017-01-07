@@ -6,10 +6,7 @@ class abstract_factory {
 
 	static public function pre_actions($name) {
 
-		$array = array(
-			"account" => array(
-			),
-		);
+		$array = array();
 		
 		if(array_key_exists($name, $array)) {
 			$requests = $array[$name];			
@@ -26,6 +23,9 @@ class abstract_factory {
 
 	static public function post_actions($service, $request_method) {
 
+		//You are looking at the service name at the root of the hierachy.
+		//The api module that we are tu use will depend on the request method.
+		//There's a chance that multiple api modules could be affected
 		$array = array(
 			"account" => array(
 				"POST" => array(
@@ -83,6 +83,8 @@ class abstract_factory {
 
 	static public function affected_database_tables($name) {
 
+		//You are looking at the service name at the root of the hierachy.
+		//There's a chance that multiple multiple database tables will be affected, given the api call.
 		$array = array("account" => array("user", "profile"));
 		
 		if(array_key_exists($name, $array)) {
@@ -104,6 +106,8 @@ class abstract_factory {
 
 		$result = null;
 
+		//There are two different sets of database tables involved.
+		//Because of the prefixes involved, I was forced to choose this approach
 		$obj = "l2l_" . $name . "_model";
 		if(class_exists($obj)) {
 			$result = new $obj();

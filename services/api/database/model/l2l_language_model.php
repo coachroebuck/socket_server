@@ -2,13 +2,7 @@
 // no direct access
 defined( '_RMEXEC' ) or die( 'Restricted access' );
 
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_condition_model.php");
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_db_table_model.php");
-require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_table_column_model.php");
-
 class l2l_language_model extends abstract_db_table_model {
-	
-	public $table_columns;
 	
 	function __construct()
 	{
