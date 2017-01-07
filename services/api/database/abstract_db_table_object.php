@@ -43,7 +43,7 @@ class abstract_db_table_object extends abstract_model {
 		
 		$this->database_table_model->queryComponents($fields, $conditions);
 		$query = "$fields FROM " 
-			. DATABASE_NAME . ".$table_name $alias $conditions";
+			. DB_NAME . ".$table_name $alias $conditions";
 		$result = $this->db->query($query);
 		
 		log_service::exit_method(__CLASS__, __FUNCTION__, $result);
@@ -70,7 +70,7 @@ class abstract_db_table_object extends abstract_model {
 			}
 
 			$statement = "INSERT INTO " 
-				. DATABASE_NAME . "." . $table_name
+				. DB_NAME . "." . $table_name
 				. " ($fields) VALUES ($values) ";
 			$result = $this->db->execute($statement);
 		}
@@ -96,7 +96,7 @@ class abstract_db_table_object extends abstract_model {
 		
 		$this->database_table_model->queryComponents($fields, $conditions);
 		$query = "$fields FROM " 
-			. DATABASE_NAME . "." . $table_name
+			. DB_NAME . "." . $table_name
 			. " $alias WHERE $primary_key = $id";
 		$result = $this->db->query($query);
 		
@@ -124,7 +124,7 @@ class abstract_db_table_object extends abstract_model {
 			}
 
 			$statement = "UPDATE " 
-				. DATABASE_NAME . "." . $table_name
+				. DB_NAME . "." . $table_name
 				. " $fields $conditions ";
 			$result = $this->db->execute($statement);
 		}
@@ -150,7 +150,7 @@ class abstract_db_table_object extends abstract_model {
 		
 		$this->database_table_model->queryComponents($fields, $conditions);
 		$query = "$fields FROM " 
-			. DATABASE_NAME . "." . $table_name
+			. DB_NAME . "." . $table_name
 			. " $alias WHERE $primary_key = $value";
 		$result = $this->db->query($query);
 		
@@ -174,7 +174,7 @@ class abstract_db_table_object extends abstract_model {
 			}
 
 			$statement = "DELETE FROM " 
-				. DATABASE_NAME . ".$table_name $conditions ";
+				. DB_NAME . ".$table_name $conditions ";
 			$result = $this->db->execute($statement);
 		}
 		catch(exception $e) {

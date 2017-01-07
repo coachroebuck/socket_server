@@ -14,9 +14,6 @@ class login {
 		$result = null;
 
 		switch ($method) {
-			case 'GET':
-				break;
-			
 			case 'POST':
 				$server = server::get();
 				$result = $server->handleTokenRequest(OAuth2\Request::createFromGlobals())->send();

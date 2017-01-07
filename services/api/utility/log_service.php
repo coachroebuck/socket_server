@@ -44,7 +44,10 @@ class log_service {
 
 	static public function log($systemMessage)
 	{
-		log_service::writeln($systemMessage);
+		if(APPLICATION_TRACE == 1)
+		{
+			log_service::writeln($systemMessage);
+		}
 	}
 
 	static public function writeln()
