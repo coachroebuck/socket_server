@@ -24,28 +24,69 @@ curl -X DELETE -d language_name=""  http://localhost/sites/server/services/langu
 
 
 ---------------------------------------------------------------------------------------------------------
-USER
+PROFILE
 ---------------------------------------------------------------------------------------------------------
-curl -X GET http://localhost/sites/server/services/user
-curl -X GET http://localhost/sites/server/services/user?email=coachroebuck@yahoo.com
-curl -X POST -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d first_name=asdfsdfasd http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d last_name=asdfasdfdsf  http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d nickname="sdfadsfdsf" http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d email="developer@coachroebuck.com" http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d password=password http://localhost/sites/server/services/user
-curl -X PUT -d user_id=1 -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d email="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/user
-curl -X DELETE -d user_id=1 http://localhost/sites/server/services/user
+curl -X GET http://localhost/sites/server/services/profile
+curl -X GET http://localhost/sites/server/services/profile?username=coachroebuck@yahoo.com
+curl -X POST -d nickname="Coach Roebuck" -d username="coachroebuck@yahoo.com" -d http://localhost/sites/server/services/profile
+curl -X PUT -d profile_id=1 -d nickname="sdfadsfdsf" http://localhost/sites/server/services/profile
+curl -X PUT -d profile_id=1 -d username="developer@coachroebuck.com" http://localhost/sites/server/services/profile
+curl -X PUT -d profile_id=1 -d nickname="Coach Roebuck" -d username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/profile
+curl -X DELETE -d profile_id=1 http://localhost/sites/server/services/profile
 
-curl -X POST http://localhost/sites/server/services/user
-curl -X PUT http://localhost/sites/server/services/user
-curl -X DELETE http://localhost/sites/server/services/user
+curl -X POST http://localhost/sites/server/services/profile
+curl -X PUT http://localhost/sites/server/services/profile
+curl -X DELETE http://localhost/sites/server/services/profile
 
-curl -X POST -d email="asdfasfadsf" http://localhost/sites/server/services/user
-curl -X PUT  -d email="asdfdsdf" http://localhost/sites/server/services/user
-curl -X DELETE -d email="asdfasdfds" http://localhost/sites/server/services/user
+curl -X POST -d username="asdfasfadsf" http://localhost/sites/server/services/profile
+curl -X PUT  -d username="asdfdsdf" http://localhost/sites/server/services/profile
+curl -X DELETE -d username="asdfasdfds" http://localhost/sites/server/services/profile
 
-curl -X POST -d email= http://localhost/sites/server/services/user
-curl -X PUT  -d email="" http://localhost/sites/server/services/user
-curl -X DELETE -d email=""  http://localhost/sites/server/services/user
+curl -X POST -d username= http://localhost/sites/server/services/profile
+curl -X PUT  -d username="" http://localhost/sites/server/services/profile
+curl -X DELETE -d username=""  http://localhost/sites/server/services/profile
 
+
+---------------------------------------------------------------------------------------------------------
+ACCOUNT
+---------------------------------------------------------------------------------------------------------
+curl -X GET http://localhost/sites/server/services/account
+curl -X GET http://localhost/sites/server/services/account?username=coachroebuck@yahoo.com
+
+curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=password -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/account
+
+curl -X PUT -d account_id=1 -d first_name=asdfsdfasd http://localhost/sites/server/services/account
+curl -X PUT -d account_id=1 -d last_name=asdfasdfdsf  http://localhost/sites/server/services/account
+curl -X PUT -d account_id=1 -d nickname="sdfadsfdsf" http://localhost/sites/server/services/account
+curl -X PUT -d account_id=1 -d username="developer@coachroebuck.com" http://localhost/sites/server/services/account
+curl -X PUT -d account_id=1 -d password=password http://localhost/sites/server/services/account
+curl -X PUT -d account_id=1 -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/account
+curl -X DELETE -d account_id=1 http://localhost/sites/server/services/account
+
+curl -X POST http://localhost/sites/server/services/account
+curl -X PUT http://localhost/sites/server/services/account
+curl -X DELETE http://localhost/sites/server/services/account
+
+curl -X POST -d username="asdfasfadsf" http://localhost/sites/server/services/account
+curl -X PUT  -d username="asdfdsdf" http://localhost/sites/server/services/account
+curl -X DELETE -d username="asdfasdfds" http://localhost/sites/server/services/account
+
+curl -X POST -d username= http://localhost/sites/server/services/account
+curl -X PUT  -d username="" http://localhost/sites/server/services/account
+curl -X DELETE -d username=""  http://localhost/sites/server/services/account
+
+---------------------------------------------------------------------------------------------------------
+LOGIN
+---------------------------------------------------------------------------------------------------------
+curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=password -d  username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/login
+
+---------------------------------------------------------------------------------------------------------
+LOGOUT
+---------------------------------------------------------------------------------------------------------
+curl -X POST -d token=<access_token|refresh_token> http://localhost/sites/server/services/logout
+
+Example
+curl -X POST -d token=aee6137a929d08656a0c95180bb4c172dd9acd63 http://localhost/sites/server/services/logout
+curl -X POST -d token=a87553ed138eb981a800c9bc383f91f5c137a2b4 http://localhost/sites/server/services/logout
+
+reference: https://github.com/bshaffer/oauth2-server-php/pull/586/files

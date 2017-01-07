@@ -15,6 +15,7 @@ class abstract_table_column_model extends abstract_model {
 	public $is_delete_identifier;
 	public $column_alias;
 	public $encrpytion_required;
+	public $default_value;
 	
 
 	function __construct(
@@ -27,7 +28,8 @@ class abstract_table_column_model extends abstract_model {
 		$update_info = null,
 		$is_delete_identifier = null,
 		$column_alias = null,
-		$encrpytion_required = null)
+		$encrpytion_required = null,
+		$default_value = null)
 	{
 		$this->name = $name;
 		$this->data_type = $data_type;
@@ -39,6 +41,7 @@ class abstract_table_column_model extends abstract_model {
 		$this->is_delete_identifier = $is_delete_identifier;
 		$this->column_alias = $column_alias;
 		$this->encrpytion_required = $encrpytion_required;
+		$this->default_value = $default_value;
 	}
 	
 	function __destruct()

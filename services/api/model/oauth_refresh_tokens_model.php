@@ -32,9 +32,17 @@ class oauth_refresh_tokens_model extends abstract_db_table_model {
 				new abstract_condition_model(condition_operator::Equal), 
 				true, true, null, null));
 		array_push($table_columns, 
-			new abstract_table_column_model("expires", table_column_data_type::Number, null,  
+			new abstract_table_column_model("expires", 
+				table_column_data_type::Number, 
+				null,  
 				new abstract_condition_model(condition_operator::Equal), 
-				true, true, null, null));
+				true, 
+				true, 
+				null, 
+				null, 
+				null, 
+				null, 
+				"CURRENT_TIMESTAMP"));
 		array_push($table_columns, 
 			new abstract_table_column_model("scope", table_column_data_type::Text, null,  
 				new abstract_condition_model(condition_operator::Equal), 

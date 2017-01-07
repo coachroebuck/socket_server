@@ -129,8 +129,6 @@ class abstract_db_table_model extends abstract_model {
 
 	private function appendConditionsText(&$conditions, $condition_info, $name, $data_type, $value, $alias = null) {
 
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-
 		if(isset($condition_info)) {
 
 			$nextCondition = $condition_info->createConditionText($alias, $name, $data_type, $value, null, null);
@@ -142,8 +140,6 @@ class abstract_db_table_model extends abstract_model {
 				$conditions .= " AND $nextCondition ";
 			}
 		}
-		
-		log_service::exit_method(__CLASS__, __FUNCTION__);
 	}
 
 	protected function buildInsertComponents($object, &$fields, &$values) {
@@ -215,15 +211,11 @@ class abstract_db_table_model extends abstract_model {
 
 	private function appendUpdateStatementText(&$input, $key, $data_type, $value) {
 
-		log_service::enter_method(__CLASS__, __FUNCTION__);
-
 		if($data_type == table_column_data_type::Text) {
 			$value = "'" . addslashes($value) . "'";
 		}
 
 		$input = empty($input) ? " SET $key=$value " : $input . ", $key=$value ";
-		
-		log_service::exit_method(__CLASS__, __FUNCTION__);
 	}
 
 	protected function buildDeleteComponents($object, &$conditions) {

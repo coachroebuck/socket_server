@@ -13,6 +13,8 @@ define( 'DS', DIRECTORY_SEPARATOR );
 
 define( 'API_DIRECTORY', "api");
 
+define( 'BIN_DIRECTORY', "bin");
+
 define('APP_TRACE_ENABLED', 1);
 
 $isLocalHost = strpos($_SERVER['HTTP_HOST'], 'localhost') > -1
@@ -24,8 +26,8 @@ define('DB_USER', ( $isLocalHost ? 'root' : '<my user name'));
 define('DB_PASSWORD', ( $isLocalHost ? 'root' : '<my password>'));
 
 //********************************************************************
-define('OAUTH_CLIENT_ID', '<my client ID>');
-define('OAUTH_CLIENT_SECRET', '<my client secret>');
+define('OAUTH_CLIENT_ID', 'lang2lang_client');
+define('OAUTH_CLIENT_SECRET', '8B7C2C31C9DB56B74A8D5216777A1');
 
 define('APPLICATION_TRACE', 1);
 

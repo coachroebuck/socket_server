@@ -1,0 +1,66 @@
+Tutorials
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+TO CREATE A NEW ACCOUNT
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+ curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=password -d first_name=Michael -d last_name=Roebuck -d nickname="Coach Roebuck" -d username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/account
+
+{"user":{"username":"coachroebuck@yahoo.com","first_name":"Michael","last_name":"Roebuck"},"profile":{"profile_id":"1","username":"coachroebuck@yahoo.com","nickname":"Coach Roebuck"},"login":{"access_token":"cc5a1280a488e94a917bc181516e26de80de69eb","expires_in":31536000,"token_type":"Bearer","scope":null,"refresh_token":"8ed9bf398e50a4144bbd4f551f0e14eb8b72ba20"}}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+TO LOGIN
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=password -d  username="coachroebuck@yahoo.com" -d password=guest00001 http://localhost/sites/server/services/login
+
+{"login":{"access_token":"a2a1b37f212c68a5d883758c41a0f671d8407b08","expires_in":31536000,"token_type":"Bearer","scope":null,"refresh_token":"ae98c62573b86a57182767ea22eee985a9c1cf86"}}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+TO REFRESH THE TOKEN
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+curl -X POST -d client_id=lang2lang_client -d client_secret=8B7C2C31C9DB56B74A8D5216777A1 -d grant_type=refresh_token -d access_token=95701349ab48d3e33c6549f3ea62400be0a2b912 -d refresh_token=871799e1b4737607bbf4f6c3a591d9d07192ae25 http://localhost/sites/server/services/login
+
+{"login":{"access_token":"1961d20931858683efdf8a9044a2f209e19b0f53","expires_in":31536000,"token_type":"Bearer","scope":null}}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+TO LOGOUT, The value of "token" can either be an access_token or a refresh_token.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+curl -X POST -d token=cc5a1280a488e94a917bc181516e26de80de69eb http://localhost/sites/server/services/logout
+
+{"logout":{"revoked":true}}
+
+curl -X POST -d token=8ed9bf398e50a4144bbd4f551f0e14eb8b72ba20 http://localhost/sites/server/services/logout
+
+{"logout":{"revoked":true}}
+
+curl -X POST -d token=a2a1b37f212c68a5d883758c41a0f671d8407b08 http://localhost/sites/server/services/logout
+
+{"logout":{"revoked":true}}
+
+curl -X POST -d token=ae98c62573b86a57182767ea22eee985a9c1cf86 http://localhost/sites/server/services/logout
+
+{"logout":{"revoked":true}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

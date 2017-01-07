@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.11)
 # Database: lang2lang
-# Generation Time: 2017-01-06 21:41:14 +0000
+# Generation Time: 2017-01-07 00:20:18 +0000
 # ************************************************************
 
 
@@ -51,18 +51,19 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table l2l_user
+# Dump of table l2l_profile
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `l2l_user`;
+DROP TABLE IF EXISTS `l2l_profile`;
 
-CREATE TABLE `l2l_user` (
-  `email` text NOT NULL,
+CREATE TABLE `l2l_profile` (
+  `profile_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` text NOT NULL,
   `nickname` text NOT NULL,
   `last_change_user_id` int(11) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_modified_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`email`(128))
+  PRIMARY KEY (`profile_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

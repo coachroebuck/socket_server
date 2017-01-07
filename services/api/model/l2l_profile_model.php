@@ -6,33 +6,25 @@ require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_condition_model.p
 require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_db_table_model.php");
 require_once(RMPATH_BASE . DS . API_DIRECTORY . DS . "abstract_table_column_model.php");
 
-class l2l_user_model extends abstract_db_table_model {
+class l2l_profile_model extends abstract_db_table_model {
 	
 	public $table_columns;
 	
 	function __construct()
 	{
 		$this->table_name = str_replace("_model", "", get_class($this));
-		$this->primary_key = "user_id";
-		$this->alias = "u";
+		$this->primary_key = "profile_id";
+		$this->alias = "p";
 		$this->distinct_retrieval_key = "";
 
 		$table_columns = array();
 		array_push($table_columns, 
-			new abstract_table_column_model("user_id", table_column_data_type::Number, null, 
+			new abstract_table_column_model("profile_id", table_column_data_type::Number, null, 
 				new abstract_condition_model(condition_operator::In), 
 				true, null, null, 
 				true));
 		array_push($table_columns, 
-			new abstract_table_column_model("first_name", table_column_data_type::Text, null, 
-				new abstract_condition_model(condition_operator::In), 
-				true, true, null, null));
-		array_push($table_columns, 
-			new abstract_table_column_model("last_name", table_column_data_type::Text, null,  
-				new abstract_condition_model(condition_operator::In), 
-				true, true, null, null));
-		array_push($table_columns, 
-			new abstract_table_column_model("email", table_column_data_type::Text, null,  
+			new abstract_table_column_model("username", table_column_data_type::Text, null,  
 				new abstract_condition_model(condition_operator::In), 
 				true, true, null, null));
 		array_push($table_columns, 
