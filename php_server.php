@@ -212,7 +212,7 @@ class l2l_server {
 	}
 }
 
-$ip = "192.168.200.86";
+$ip = "192.168.29.143";
 $port = 9009;
 $max_buffer_size = 4096;
 $backlog = 20;

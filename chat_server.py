@@ -2,12 +2,12 @@
  
 import sys, socket, select
 
-# HOST = '192.168.29.143' 
-HOST = '192.168.200.86' 
+HOST = '192.168.29.143' 
+#HOST = '192.168.200.86' 
 # HOST = '192.168.1.149' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
-PORT = 5020
+PORT = 9009
 
 def chat_server():
 
