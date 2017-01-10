@@ -3,8 +3,8 @@
 import sys, socket, select
 
 # HOST = '192.168.29.143' 
-#HOST = '192.168.1.146' 
-HOST = '192.168.1.149' 
+HOST = '192.168.200.86' 
+# HOST = '192.168.1.149' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 5020
@@ -19,7 +19,7 @@ def chat_server():
     # add server socket object to the list of readable connections
     SOCKET_LIST.append(server_socket)
  
-    print "Chat server started on port " + str(PORT)
+    print "Chat server started at IP=[" + str(HOST) + "] port=[" + str(PORT) + "]"
  
     while 1:
 
