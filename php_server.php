@@ -23,14 +23,14 @@ class l2l_server {
 	private $runServer = true;
 
 	//TODO: Move this shit to a database, if possible
-	private $client_sockets = array();
+	private $client_sockets;
 	
 	function __construct($ip, $port, $max_buffer_size = 2048, $backlog = 20) {
 
 		$this->max_buffer_size = $max_buffer_size;
 		$this->ip = $ip;
 		$this->port = $port;
-
+		$this->client_sockets = array();
 		$this->createSocket();
 		$this->setSocketOptions();
 		$this->bindAndListen();
@@ -141,7 +141,7 @@ class l2l_server {
 		        //TODO: Welcome new socket
 		        $message = "Welcome $client_socket";
 
-		        socket_write($client_socket, $msg, strlen($msg));
+		        socket_write($client_socket, $message, strlen($message));
 				$this->socketInfo("Message sent to newcomer: " . $message);
 		    }
 
@@ -182,7 +182,7 @@ class l2l_server {
 		$message = "Client $client_socket has connected\n";
 		$this->broadcast($message);
 		$this->setSocketToNonBlockingMode($client_socket);
-		array_push($this->$client_sockets, $client_socket);
+		array_push($this->client_sockets, $client_socket);
 	}
 
 	private function disconnect($client_socket) {
