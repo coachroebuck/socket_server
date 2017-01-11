@@ -13,6 +13,24 @@ date_default_timezone_set('UTC');
  * as it comes in. */
 // ob_implicit_flush();
 
+class l2l_client_socket {
+	public $socket;
+	public $handShook;
+	public $headers;
+
+	function __construct($socket, $handShook = false, $headers = null) {
+		$this->socket = $socket;
+		$this->handShook = $handShook;
+		$this->headers = $headers;		
+	}
+
+	function __destruct() {
+		unset($this->socket);
+		unset($this->handShook);
+		unset($this->headers);
+	}
+}
+
 class l2l_server {
 
 	private $ip;
@@ -35,8 +53,8 @@ class l2l_server {
 		$this->setSocketOptions();
 		$this->bindAndListen();
 
-		if(empty($this->runServer)) {
-			$this->socketInfo("Server started\nListening on: $ip:$port\nMaster socket: ". $this->master_socket);
+		if(!empty($this->runServer)) {
+			$this->socketInfo("Server started! Listening on: IP=[$ip] port=[$port] Master socket=[". $this->master_socket . "]");
 		}
 	}
 
@@ -46,7 +64,7 @@ class l2l_server {
 			$this->socketError("Unable to create socket.", true);
 		}
 		
-		$this->setSocketToNonBlockingMode($this->master_socket, true);
+		// $this->setSocketToNonBlockingMode($this->master_socket, true);
 	}
 
 	private function setSocketToNonBlockingMode($socket, $showStoppingError = false) {
@@ -118,13 +136,12 @@ class l2l_server {
 	}
 
 	private function socketError($message, $showStoppingError = false) {
-		print $message . socket_strerror(socket_last_error()) . PHP_EOL;
+		print PHP_EOL . date('Y-m-d H:i:s') . ": " . $message . socket_strerror(socket_last_error()) . PHP_EOL;
 		$this->runServer = !$showStoppingError;
-		exit;
 	}
 
 	private function socketInfo($message) {
-		print $message . PHP_EOL;
+		print PHP_EOL . date('Y-m-d H:i:s') . ": " . $message . PHP_EOL;
 	}
 
 	public function run() {
@@ -133,65 +150,278 @@ class l2l_server {
 		{
 			$buffer = null;
 
-			//Handle new connections
-		    if(($client_socket = socket_accept($this->master_socket)) !== false)
+			$this->socketInfo("Accepting new client sockets...");
+
+			if(sizeof($this->client_sockets) == 0 && ($client_socket = socket_accept($this->master_socket)) !== false)
 		    {
-		    	$this->connect($client_socket);
+				$this->socketInfo("New socket client=[" . $client_socket . "] resource=[" . get_resource_type($client_socket) . "]");
 
-		        //TODO: Welcome new socket
-		        $message = "Welcome $client_socket";
+				$this->connect($client_socket);
 
-		        socket_write($client_socket, $message, strlen($message));
-				$this->socketInfo("Message sent to newcomer: " . $message);
+				// $pid = pcntl_fork(); 
+
+				// if ($pid == -1 || $pid > 0) 
+				// { 
+				// 	//fork failed *
+				// 	$this->socketError("FAILED to fork ", true);
+				// }
+		    } 
+		    else {
+		    	$this->socketInfo("No new client sockets to accept...");
 		    }
 
+			$this->socketInfo("total_clients=[" . sizeof($this->client_sockets) . "]");
+
 		    // Handle Input From 
-		    foreach ($this->client_sockets as $key => $client) { // for each client        
-		        if (false === ($buffer = socket_read($client, $this->max_buffer_size, PHP_NORMAL_READ))) {
-		        	$this->socketError("Failed to read from client socket[$client]");
-	            }
+		    foreach ($this->client_sockets as $key => $l2l_client_socket) { // for each client        
 
-	            $buffer = trim($buffer);
+		    	$client = $l2l_client_socket->socket;
+		    	
+				$this->socketInfo("Next client=[$client]");
 
-	            if(!empty($buffer)) {
-	            	$lowerCase = strtolower($buffer);
+				$numBytes = @socket_recv($client, $buffer, $this->max_buffer_size, 0); 
+				
+				$this->socketInfo("Received bytes=[$numBytes]");
 
-	            	if(strcmp($lowerCase, "quit") == 0
-	            		|| strcmp($lowerCase, "shutdown") == 0) {
-						socket_close($client);
-						$this->disconnect($client);
-	            	}
-	            }
+				if ($numBytes === false) {
+				
+					$sockErrNo = socket_last_error($client);
+					switch ($sockErrNo)
+					{
+						case 102: // ENETRESET    -- Network dropped connection because of reset
+						case 103: // ECONNABORTED -- Software caused connection abort
+						case 104: // ECONNRESET   -- Connection reset by peer
+						case 108: // ESHUTDOWN    -- Cannot send after transport endpoint shutdown -- probably more of an error on our part, if we're trying to write after the socket is closed.  Probably not a critical error, though.
+						case 110: // ETIMEDOUT    -- Connection timed out
+						case 111: // ECONNREFUSED -- Connection refused -- We shouldn't see this one, since we're listening... Still not a critical error.
+						case 112: // EHOSTDOWN    -- Host is down -- Again, we shouldn't see this, and again, not critical because it's just one connection and we still want to listen to/for others.
+						case 113: // EHOSTUNREACH -- No route to host
+						case 121: // EREMOTEIO    -- Rempte I/O error -- Their hard drive just blew up.
+						case 125: // ECANCELED    -- Operation canceled
 
-	            $message = "$client: $buffer";
-	            $this->broadcast($message);
+						$this->socketInfo("Socket disconnect=[$client] error=[" . socket_strerror($sockErrNo) . "]");
+						$this->disconnect($client); // disconnect before clearing error, in case someone with their own implementation wants to check for error conditions on the socket.
+						break;
+						default:
+
+						if(!$l2l_client_socket->handShook) {
+							continue;
+						}
+
+						$this->socketInfo("Socket error=[$client] error=[" . socket_strerror($sockErrNo) . "]");
+					}
+
+				}
+				else if ($numBytes == 0) {
+					$this->disconnect($client);
+				} 
+				else if(!isset($l2l_client_socket->handShook)) {
+		            $this->handShake($l2l_client_socket, $buffer);
+				}
+				else {
+		            $message = "$client: $buffer";
+					$this->socketInfo("New Message: client=[$client] message=[" . $message . "]");
+					if(!$l2l_client_socket->handShook) {
+						$this->handShake($l2l_client_socket, $buffer);
+					}
+					else {
+			            $this->broadcast($message);
+					}
+				}
+
+		  //   	if (false === ($buffer = socket_read($client, $this->max_buffer_size, PHP_BINARY_READ))) {
+		  //       	$this->socketError("Failed to read from client socket[$client]");
+	   //          }
+
+	   //          $buffer = trim($buffer);
+
+	   //          if(!empty($buffer)) {
+	   //          	$lowerCase = strtolower($buffer);
+
+	   //          	if(strcmp($lowerCase, "quit") == 0
+	   //          		|| strcmp($lowerCase, "shutdown") == 0) {
+				// 		socket_close($client);
+				// 		$this->disconnect($client);
+	   //          	}
+	   //          }
+
+	   //          $message = "$client: $buffer";
+				// $this->socketInfo("Read message=[" . $message . "]");
+	   //          $this->broadcast($message, $client);
 		    }   
 		}
 	}
 
-	private function broadcast($message) {
-		foreach($this->client_sockets as $key => $next_client_socket) {
-			if(!socket_write($next_client_socket, $message)) {
-				$this->disconnect($next_client_socket);
+	private function broadcast($message, $l2l_client_recepient = "") {
+
+		$this->socketInfo("Broadcasting message=[$message]");
+
+		foreach($this->client_sockets as $key => $next_client_recepient) {
+			if($next_client_recepient != $l2l_client_recepient 
+				&& $next_client_recepient->handShook
+				&& !socket_write($next_client_recepient->socket, $message)) {
+				$this->socketInfo("FAILED to broadcast to=[" . $next_client_socket . "]: message=[" . $message . "]");
+				$this->disconnect($next_client_recepient);
 			}
-			$this->socketInfo("Message Broadcasted: " . $message);
+			else {
+				$this->socketInfo("Message Broadcasted to=[" . $next_client_recepient->socket . "]: message=[" . $message . "]");
+			}
 		}
 	}
 
 	private function connect($client_socket) {
 		$message = "Client $client_socket has connected\n";
+
+		$l2l_client_socket = new l2l_client_socket($client_socket);
+
 		$this->broadcast($message);
-		$this->setSocketToNonBlockingMode($client_socket);
-		array_push($this->client_sockets, $client_socket);
+		// $this->setSocketToNonBlockingMode($client_socket);
+		$this->client_sockets[sizeof($this->client_sockets)] = $l2l_client_socket;
+
+		$this->socketInfo("Added client_socket=[" . $client_socket . "] total_clients=[" . sizeof($this->client_sockets) . "]");
 	}
 
-	private function disconnect($client_socket) {
-		if(($key = array_search($client_socket, $this->client_sockets)) !== false) {
-		    unset($this->client_socket[$key]);
+	private function disconnect($l2l_client_socket) {
+		
+		$message = "Client " . $l2l_client_socket->socket . " has been disconnected\n";
+		
+		$this->socketInfo("Removing client_socket=[" . $l2l_client_socket->socket . "]");
+
+		if($l2l_client_socket->handShook) {
+			$this->broadcast($message);
+		}
+		
+		$key = array_search($l2l_client_socket, $this->client_sockets);
+		if(isset($key)) {
+		    unset($this->client_sockets[$key]);
+		}
+		if(is_resource($l2l_client_socket->socket)) {
+			socket_close($l2l_client_socket->socket);
+		}
+		
+		unset($client_socket);
+	}
+
+	private function handShake($l2l_client_socket, $buffer) {
+
+		$magicGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+		$headers = array();
+		$lines = explode("\n",$buffer);
+
+		foreach ($lines as $line) {
+			if (strpos($line,":") !== false) {
+				$header = explode(":",$line,2);
+				$headers[strtolower(trim($header[0]))] = trim($header[1]);
+				}
+			elseif (stripos($line,"get ") !== false) {
+				preg_match("/GET (.*) HTTP/i", $buffer, $reqResource);
+				$headers['get'] = trim($reqResource[1]);
+			}
 		}
 
-		$message = "Client $client_socket has been disconnected\n";
-		$this->broadcast($message);
+		echo "HEADERS:\n";
+		print_r($headers);
+		echo "\n\n";
+
+		// Request Method
+		// if (isset($headers['get'])) {
+		// 	$user->requestedResource = $headers['get'];
+		// } 
+		// else {
+		// 	// todo: fail the connection
+		// 	$handshakeResponse = "HTTP/1.1 405 Method Not Allowed\r\n\r\n";     
+		// }
+
+		// //Control who we will be accepting...
+		// if (!isset($headers['host']) || !$this->checkHost($headers['host'])) {
+		// 	$handshakeResponse = "HTTP/1.1 400 Bad Request";
+		// }
+		// if (!isset($headers['upgrade']) || strtolower($headers['upgrade']) != 'websocket') {
+		// 	$handshakeResponse = "HTTP/1.1 400 Bad Request";
+		// } 
+		// if (!isset($headers['connection']) || strpos(strtolower($headers['connection']), 'upgrade') === FALSE) {
+		// 	$handshakeResponse = "HTTP/1.1 400 Bad Request";
+		// }
+		// if (!isset($headers['sec-websocket-key'])) {
+		// 	$handshakeResponse = "HTTP/1.1 400 Bad Request";
+		// } 
+		// else {
+
+		// }
+
+		// if (!isset($headers['sec-websocket-version']) || strtolower($headers['sec-websocket-version']) != 13) {
+		// 	$handshakeResponse = "HTTP/1.1 426 Upgrade Required\r\nSec-WebSocketVersion: 13";
+		// }
+		// if (($this->headerOriginRequired && !isset($headers['origin']) ) || ($this->headerOriginRequired && !$this->checkOrigin($headers['origin']))) {
+		// 	$handshakeResponse = "HTTP/1.1 403 Forbidden";
+		// }
+		// if (($this->headerSecWebSocketProtocolRequired && !isset($headers['sec-websocket-protocol'])) || ($this->headerSecWebSocketProtocolRequired && !$this->checkWebsocProtocol($headers['sec-websocket-protocol']))) {
+		// 	$handshakeResponse = "HTTP/1.1 400 Bad Request";
+		// }
+		// if (($this->headerSecWebSocketExtensionsRequired && !isset($headers['sec-websocket-extensions'])) || ($this->headerSecWebSocketExtensionsRequired && !$this->checkWebsocExtensions($headers['sec-websocket-extensions']))) {
+		// 	$handshakeResponse = "HTTP/1.1 400 Bad Request";
+		// }
+
+		// Done verifying the _required_ headers and optionally required headers.
+
+		// if (isset($handshakeResponse)) {
+		// 	socket_write($user->socket,$handshakeResponse,strlen($handshakeResponse));
+		// 	$this->disconnect($user->socket);
+		// 	return;
+		// }
+
+		// $user->headers = $headers;
+		// $user->handshake = $buffer;
+
+		$webSocketKeyHash = sha1($headers['sec-websocket-key'] . $magicGUID);
+
+		$rawToken = "";
+		for ($i = 0; $i < 20; $i++) {
+			$rawToken .= chr(hexdec(substr($webSocketKeyHash,$i*2, 2)));
+		}
+		$handshakeToken = base64_encode($rawToken) . "\r\n";
+
+		$subProtocol = (isset($headers['sec-websocket-protocol'])) ? $this->processProtocol($headers['sec-websocket-protocol']) : "";
+		$extensions = (isset($headers['sec-websocket-extensions'])) ? $this->processExtensions($headers['sec-websocket-extensions']) : "";
+
+		$handshakeResponse = "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: $handshakeToken$subProtocol$extensions\r\n";
+		if(socket_write($l2l_client_socket->socket,$handshakeResponse,strlen($handshakeResponse))) {
+			$l2l_client_socket->handShook = 1;
+		}
+		else {
+			$this->socketInfo("FAILED to send welcome message to=[" . $l2l_client_socket->socket . "]: [" . $message . "]");
+			$this->disconnect($l2l_client_socket->socket);
+		}
+		
+		
+        //TODO: Welcome new socket
+  //       $message = "Welcome " . $l2l_client_socket->socket;
+
+  //       $this->socketInfo("Sending welcome message to client_socket=[" . $l2l_client_socket->socket . "] message=[$message]");	
+
+  //       if(!socket_write($l2l_client_socket->socket, $message)) {
+		// 	$this->socketInfo("FAILED to send welcome message to=[" . $l2l_client_socket->socket . "]: [" . $message . "]");
+		// 	$this->disconnect($l2l_client_socket->socket);
+		// }
+		// else {
+		// 	$this->socketInfo("Send welcome message to=[" . $l2l_client_socket->socket . "]: [" . $message . "]");
+		// }
+
+		$this->broadcast("client socket=[" . $l2l_client_socket->socket . "] joined", $l2l_client_socket);
+        
+	}
+
+	private function processProtocol($protocol) {
+		// return either "Sec-WebSocket-Protocol: SelectedProtocolFromClientList\r\n" or return an empty string.  
+		// The carriage return/newline combo must appear at the end of a non-empty string, and must not
+		// appear at the beginning of the string nor in an otherwise empty string, or it will be considered part of 
+		// the response body, which will trigger an error in the client as it will not be formatted correctly.
+		return ""; 
+	  }
+
+	private function processExtensions($extensions) {
+		// return either "Sec-WebSocket-Extensions: SelectedExtensions\r\n" or return an empty string.
+		return ""; 
 	}
 
 	function __destruct()
@@ -201,8 +431,10 @@ class l2l_server {
 			unset($client_socket);
 		}
 
-		socket_close($this->master_socket);
-
+		if(is_resource($this->master_socket)) {
+			socket_close($this->master_socket);
+		}
+		
 		unset($this->ip);
 		unset($this->port);
 		unset($this->master_socket);
@@ -212,9 +444,9 @@ class l2l_server {
 	}
 }
 
-$ip = "192.168.29.143";
-$port = 9009;
-$max_buffer_size = 4096;
+$ip = "192.168.200.86";
+$port = 9090;
+$max_buffer_size = 512;
 $backlog = 20;
 $l2l_server = new l2l_server($ip, $port, $max_buffer_size, $backlog);
 $l2l_server->run();
