@@ -18,6 +18,7 @@ class l2l_server {
 	private $ip;
 	private $port;
 	private $master_socket;
+	private $all_sockets;
 	private $max_buffer_size;
 	private $backlog;
 	private $runServer = true;
@@ -31,11 +32,13 @@ class l2l_server {
 		$this->ip = $ip;
 		$this->port = $port;
 		$this->client_sockets = array();
+		$this->all_sockets = array();
+
 		$this->createSocket();
 		$this->setSocketOptions();
 		$this->bindAndListen();
 
-		if(empty($this->runServer)) {
+		if($this->runServer == true) {
 			$this->socketInfo("Server started\nListening on: $ip:$port\nMaster socket: ". $this->master_socket);
 		}
 	}
@@ -46,7 +49,8 @@ class l2l_server {
 			$this->socketError("Unable to create socket.", true);
 		}
 		
-		$this->setSocketToNonBlockingMode($this->master_socket, true);
+		// $this->setSocketToNonBlockingMode($this->master_socket, true);
+		array_push($this->all_sockets, $this->master_socket);
 	}
 
 	private function setSocketToNonBlockingMode($socket, $showStoppingError = false) {
@@ -131,66 +135,132 @@ class l2l_server {
 
 		while($this->runServer)
 		{
-			$buffer = null;
+			$read = $this->all_sockets;
+        	$write  = NULL;
+			$except = NULL;
 
-			//Handle new connections
-		    if(($client_socket = socket_accept($this->master_socket)) !== false)
-		    {
-		    	$this->connect($client_socket);
+	   		$num_changed_sockets = socket_select($read, $write, $except, 0);
 
-		        //TODO: Welcome new socket
-		        $message = "Welcome $client_socket";
-
-		        socket_write($client_socket, $message, strlen($message));
-				$this->socketInfo("Message sent to newcomer: " . $message);
-		    }
-
-		    // Handle Input From 
-		    foreach ($this->client_sockets as $key => $client) { // for each client        
-		        if (false === ($buffer = socket_read($client, $this->max_buffer_size, PHP_NORMAL_READ))) {
-		        	$this->socketError("Failed to read from client socket[$client]");
-	            }
-
-	            $buffer = trim($buffer);
-
-	            if(!empty($buffer)) {
-	            	$lowerCase = strtolower($buffer);
-
-	            	if(strcmp($lowerCase, "quit") == 0
-	            		|| strcmp($lowerCase, "shutdown") == 0) {
-						socket_close($client);
-						$this->disconnect($client);
-	            	}
-	            }
-
-	            $message = "$client: $buffer";
-	            $this->broadcast($message);
-		    }   
+			if ($num_changed_sockets === false) {
+			    /* Error handling */
+			} 
+			else if ($num_changed_sockets > 0) {
+				/* At least at one of the sockets something interesting happened */
+			    if (in_array($this->master_socket, $read)) {
+			    	$this->acceptNewClientIfNeeded();
+		        } 
+		        else {
+			        $this->readFromSocketClients($read);
+		        }
+			}  
 		}
 	}
 
-	private function broadcast($message) {
-		foreach($this->client_sockets as $key => $next_client_socket) {
-			if(!socket_write($next_client_socket, $message)) {
-				$this->disconnect($next_client_socket);
+	private function acceptNewClientIfNeeded() {
+
+	   	$this->socketInfo("Attempting to accept new client...");
+
+		//Handle new connections
+		if(($client_socket = socket_accept($this->master_socket)) !== false)
+		{
+			$this->connect($client_socket);
+			$this->broadcast("Welcome $client_socket");
+		}
+	}
+
+	private function readFromSocketClients($read) {
+			
+	   	$buffer = null;
+	   	$bytes = 0;
+
+	   	 // Handle Input From 
+	    foreach ($this->client_sockets as $key => $client) { // for each client        
+			if (in_array($client, $read)) {
+		    	if (false !== ($bytes = socket_recv($client, $buffer, $this->max_buffer_size, MSG_DONTWAIT))) {
+				    $this->socketInfo("Read $bytes bytes from socket_recv()");
+		            $buffer = trim($buffer);
+
+		            if(!empty($buffer)) {
+		            	$lowerCase = strtolower($buffer);
+
+		            	if(strcmp($lowerCase, "quit") == 0
+		            		|| strcmp($lowerCase, "shutdown") == 0) {
+							socket_close($client);
+							$this->disconnect($client);
+		            	}
+		            }
+
+		            $message = "$client: $buffer";
+		            $this->broadcast($message);			    	
+				} else {
+					// $this->socketError("Failed to read from client socket[$client]", false);
+				}
+	        }
+	    } 
+	}
+
+	private function broadcast($message, $recipient = null) {
+		$length = strlen($message);
+		if($length > 0) {
+
+			$this->socketInfo("Broadcasting Message=[$message] size=[$length]");
+	
+			foreach($this->client_sockets as $key => $next_client_socket) {
+
+				$st = $message;
+				$length = strlen($message);
+
+				if($next_client_socket != $recipient) {
+					do {
+						$sent = socket_write($next_client_socket, $st, strlen($st));
+					
+						if ($sent === false) {
+							// continue;
+							// $this->socketInfo("Error sending message=[$message] client=[$next_client_socket]");
+							$this->disconnect($next_client_socket);
+							break;
+						}
+
+						// Check if the entire message has been sented
+						if ($sent < $length) {
+							// If not sent the entire message.
+							// Get the part of the message that has not yet been sented as message
+							$st = substr($st, $sent);
+
+							// Get the length of the not sented part
+							$length -= $sent;
+
+						} 
+						else {
+							break;
+						}
+					} while($length > 0);
+				}
 			}
-			$this->socketInfo("Message Broadcasted: " . $message);
+
+			$length = strlen($message);
+			$this->socketInfo("Message Broadcasted=[$message] size=[$length]");
 		}
 	}
 
 	private function connect($client_socket) {
-		$message = "Client $client_socket has connected\n";
-		$this->broadcast($message);
-		$this->setSocketToNonBlockingMode($client_socket);
+		$message = "Client $client_socket has connected";
+		$this->broadcast($message, $client_socket);
+		// $this->setSocketToNonBlockingMode($client_socket);
 		array_push($this->client_sockets, $client_socket);
+		array_push($this->all_sockets, $client_socket);
 	}
 
 	private function disconnect($client_socket) {
+		$message = "Client $client_socket has been disconnected";
+		
 		if(($key = array_search($client_socket, $this->client_sockets)) !== false) {
-		    unset($this->client_socket[$key]);
+		    unset($this->client_sockets[$key]);
+		}
+		if(($key = array_search($client_socket, $this->all_sockets)) !== false) {
+		    unset($this->all_sockets[$key]);
 		}
 
-		$message = "Client $client_socket has been disconnected\n";
 		$this->broadcast($message);
 	}
 
@@ -212,7 +282,7 @@ class l2l_server {
 	}
 }
 
-$ip = "192.168.29.143";
+$ip = "192.168.29.225";
 $port = 9009;
 $max_buffer_size = 4096;
 $backlog = 20;

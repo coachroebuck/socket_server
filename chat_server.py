@@ -1,8 +1,8 @@
 # chat_server.py
  
-import sys, socket, select
+import sys, socket, select, json
 
-HOST = '192.168.29.143' 
+HOST = '192.168.29.225' 
 #HOST = '192.168.200.86' 
 # HOST = '192.168.1.149' 
 SOCKET_LIST = []
